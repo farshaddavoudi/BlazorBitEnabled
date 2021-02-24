@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Bit.Universal.AutoMapper" Version="7.0.0" />
+		<PackageReference Include="SourceLink.Copy.PdbFiles" Version="2.8.3" PrivateAssets="All" />
+		<PackageReference Include="Bit.Tooling.CodeGenerator.Task" Version="7.0.0" />
+		<PackageReference Condition=" '$(BlazorMode)' == 'Client' " Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.3" />
+		<PackageReference Include="Bit.Server.OData" Version="7.0.0" />
+		<PackageReference Include="Bit.Server.IdentityServer" Version="7.0.0" />
+		<PackageReference Include="Bit.Tooling.CodeAnalyzer" Version="7.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ATA.Check.Shared\ATA.Check.Shared.csproj" />
+		<ProjectReference Include="..\ATA.Check.Web\ATA.Check.Web.csproj" Condition=" '$(BlazorMode)' == 'Client' " />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Watch Include="..\Web\**\*.razor;..\Web\**\*.scss;..\Web\**\*.cs;..\Web\**\*.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\ATA.Check.Web\Pages\_Host.cshtml" Link="_Host.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="IdentityServerCertificate.pfx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

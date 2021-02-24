@@ -1,0 +1,19 @@
+﻿{
+  "BitCodeGeneratorConfigs": {
+    "BitCodeGeneratorMappings": [
+      {
+        "GenerationType": "CSharpHttpClient",
+        "Route": "ATACheck",
+        "DestinationFileName": "Bit\\ATA.Check.Model.Context",
+        "SourceProjects": [
+          {
+            "Name": "ATA.Check.Api"
+          }
+        ],
+        "DestinationProject": {
+          "Name": "ATA.Check.Web"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+﻿@page "/"
+@namespace ATA.Check.Web.Pages
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+
+@*Unlike most client side blazor projects, we use cshtml instead of html. This allows us to provide PreRendering(SSR) to our client blazor projects.*@
+@*Note that this file is being used for both client/server modes of blazor.*@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ATA.Check.Web</title>
+    <base href="~/" />
+    <link href="ATA.Check.Web.styles.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body>
+
+    <app>
+        @if (ATA.Check.Shared.BlazorDualModeDetector.Current.IsRunningServerSideBlazor())
+        {
+            <component type="typeof(App)" render-mode="@RenderMode.Server" />
+        }
+    </app>
+
+    @if (ATA.Check.Shared.BlazorDualModeDetector.Current.IsRunningServerSideBlazor())
+    {
+        <script src="_framework/blazor.server.js" asp-append-version="true"></script>
+    }
+    @if (ATA.Check.Shared.BlazorDualModeDetector.Current.IsRunningClientSideBlazor())
+    {
+        <script src="_framework/blazor.webassembly.js" asp-append-version="true"></script>
+    }
+    <script src="_content/Microsoft.AspNetCore.Components.Web.Extensions/headManager.js" asp-append-version="true"></script>
+    <script src="scripts/ata.js" asp-append-version="true"></script>
+</body>
+</html>
