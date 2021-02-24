@@ -341,3 +341,4 @@ healthchecksdb
 /ATA.Check.Web/wwwroot/scripts/ata.js.map
 /ATA.Check.Web/wwwroot/scripts/ata.js
 /ATA.Check.Web/Bit/ATA.Check.Model.Context.cs
+/ATA.Check.Web/Properties/launchSettings.json
