@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
@@ -133,15 +134,15 @@ namespace Bit.Http.Implementations
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
             request.Content.Headers.ContentLength = loginData.Length;
 
-            using HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
+            using HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-            using Stream responseContent = await response.EnsureSuccessStatusCode().Content.ReadAsStreamAsync(cancellationToken);
+            using Stream responseContent = await response.EnsureSuccessStatusCode().Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
-            Token token = await DefaultJsonContentFormatter.Current.DeserializeAsync<Token>(responseContent, cancellationToken);
+            Token token = await DefaultJsonContentFormatter.Current.DeserializeAsync<Token>(responseContent, cancellationToken).ConfigureAwait(false);
 
             token.login_date = DateTimeOffset.UtcNow;
 
-            await _tokenProvider.SetTokenAsync(token);
+            await _tokenProvider.SetTokenAsync(token).ConfigureAwait(false);
 
             return token;
         }
@@ -185,7 +186,7 @@ namespace Bit.Http.Implementations
 
         public async Task<Token?> GetTokenAsync()
         {
-            var access_token = await _jsRuntime.InvokeAsync<string>("getCookie", "access_token");
+            var access_token = await _jsRuntime.InvokeAsync<string>("getCookie", "access_token").ConfigureAwait(false);
 
             if (access_token == null)
                 return null;
@@ -197,13 +198,13 @@ namespace Bit.Http.Implementations
         {
             if (token != null)
             {
-                await _jsRuntime.InvokeVoidAsync("setCookie", "access_token", token.access_token, token.expires_in);
-                await _jsRuntime.InvokeVoidAsync("setCookie", "token_type", "Bearer", token.expires_in);
+                await _jsRuntime.InvokeVoidAsync("setCookie", "access_token", token.access_token, token.expires_in).ConfigureAwait(false);
+                await _jsRuntime.InvokeVoidAsync("setCookie", "token_type", "Bearer", token.expires_in).ConfigureAwait(false);
             }
             else
             {
-                await _jsRuntime.InvokeVoidAsync("removeCookie", "access_token");
-                await _jsRuntime.InvokeVoidAsync("removeCookie", "token_type");
+                await _jsRuntime.InvokeVoidAsync("removeCookie", "access_token").ConfigureAwait(false);
+                await _jsRuntime.InvokeVoidAsync("removeCookie", "token_type").ConfigureAwait(false);
             }
         }
     }
@@ -239,9 +240,10 @@ namespace Bit.Http.Implementations
             using Stream responseStream = await (await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false))
                 .EnsureSuccessStatusCode()
                 .Content
-                .ReadAsStreamAsync().ConfigureAwait(false);
+                .ReadAsStreamAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            return await DefaultJsonContentFormatter.Current.DeserializeAsync<TDto>(responseStream, cancellationToken).ConfigureAwait(false);
+            return await DeserializeAsync<TDto>(responseStream, null, cancellationToken).ConfigureAwait(false);
         }
 
         public virtual async Task<TDto> Create(TDto dto, ODataContext? oDataContext = default, CancellationToken cancellationToken = default)
@@ -285,9 +287,10 @@ namespace Bit.Http.Implementations
             using Stream responseStream = await (await HttpClient.GetAsync($"odata/{ODataRoute}/{ControllerName}({string.Join(",", keys)}){qs}", cancellationToken).ConfigureAwait(false))
                 .EnsureSuccessStatusCode()
                 .Content
-                .ReadAsStreamAsync().ConfigureAwait(false);
+                .ReadAsStreamAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            return await DefaultJsonContentFormatter.Current.DeserializeAsync<TDto>(responseStream, cancellationToken).ConfigureAwait(false);
+            return await DeserializeAsync<TDto>(responseStream, null, cancellationToken).ConfigureAwait(false);
         }
 
         public virtual async Task<List<TDto>> Get(ODataContext? oDataContext = default, CancellationToken cancellationToken = default)
@@ -299,12 +302,49 @@ namespace Bit.Http.Implementations
                 .Content
                 .ReadAsStreamAsync().ConfigureAwait(false);
 
-            ODataResponse<List<TDto>> odataResponse = await DefaultJsonContentFormatter.Current.DeserializeAsync<ODataResponse<List<TDto>>>(responseStream, cancellationToken).ConfigureAwait(false);
+            List<TDto> odataResponse = await DeserializeAsync<List<TDto>>(responseStream, oDataContext, cancellationToken).ConfigureAwait(false);
 
-            if (oDataContext is not null)
-                oDataContext.TotalCount = odataResponse.TotalCount;
+            return odataResponse;
+        }
 
-            return odataResponse.Value;
+        public virtual async Task<T> DeserializeAsync<T>(Stream responseStream, ODataContext? context, CancellationToken cancellationToken)
+        {
+            using StreamReader streamReader = new StreamReader(responseStream);
+            JsonElement json = await JsonSerializer.DeserializeAsync<JsonElement>(responseStream).ConfigureAwait(false);
+
+            if (!json.TryGetProperty("value", out JsonElement _))
+                return await json.ToObjectAsync<T>().ConfigureAwait(false);
+
+            ODataResponse<T> oDataResponse = await json.ToObjectAsync<ODataResponse<T>>().ConfigureAwait(false);
+
+            if (context != null)
+                context.TotalCount = oDataResponse.TotalCount;
+
+            return oDataResponse.Value;
+        }
+    }
+}
+
+namespace System.Text.Json
+{
+    public static partial class JsonExtensions
+    {
+        public static async Task<T> ToObjectAsync<T>(this JsonElement element, JsonSerializerOptions? options = null)
+        {
+            ArrayBufferWriter<byte>? bufferWriter = new ArrayBufferWriter<byte>();
+
+            await using (Utf8JsonWriter writer = new Utf8JsonWriter(bufferWriter))
+                element.WriteTo(writer);
+
+            return JsonSerializer.Deserialize<T>(bufferWriter.WrittenSpan, options)!;
+        }
+
+        public static async Task<T> ToObjectAsync<T>(this JsonDocument document, JsonSerializerOptions? options = null)
+        {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+
+            return await document.RootElement.ToObjectAsync<T>(options).ConfigureAwait(false);
         }
     }
 }
@@ -317,7 +357,7 @@ namespace Bit.Core.Implementations
 
         public async Task<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken)
         {
-            return await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellationToken);
+            return await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         public virtual string Serialize<T>([AllowNull] T obj)

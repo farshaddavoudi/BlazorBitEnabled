@@ -8,7 +8,7 @@ namespace ATA.Check.Web.Pages
     public partial class Index
     {
         [Inject]
-        public ATACheckAuthenticationStateProvider BlazorDualModeAuthenticationStateProvider { get; set; }
+        public ATACheckAuthenticationStateProvider AtaAuthenticationStateProvider { get; set; }
 
         public string Username { get; set; }
 
@@ -17,13 +17,13 @@ namespace ATA.Check.Web.Pages
         public async Task Login()
         {
             Token token = await SecurityService.LoginWithCredentials(Username, Password, "ATACheckResOwner", "secret");
-            BlazorDualModeAuthenticationStateProvider.StateHasChanged();
+            AtaAuthenticationStateProvider.StateHasChanged();
         }
 
         public async Task Logout()
         {
             await TokenProvider.SetTokenAsync(null);
-            BlazorDualModeAuthenticationStateProvider.StateHasChanged();
+            AtaAuthenticationStateProvider.StateHasChanged();
         }
     }
 }

@@ -103,7 +103,7 @@ namespace ATA.Check.Api
                 aspNetCoreApp.UseRouting();
 
                 aspNetCoreApp.UseSwagger();
-                aspNetCoreApp.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BlazorDualMode v1"));
+                aspNetCoreApp.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ata v1"));
             });
 
             dependencyManager.RegisterAspNetCoreSingleSignOnClient();

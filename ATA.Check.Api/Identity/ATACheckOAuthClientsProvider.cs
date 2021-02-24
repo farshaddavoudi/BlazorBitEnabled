@@ -14,8 +14,8 @@ namespace ATA.Check.Api.Identity
             {
                 GetResourceOwnerFlowClient(new BitResourceOwnerFlowClient
                 {
-                    ClientName = "BlazorDualModeResOwner",
-                    ClientId = "BlazorDualModeResOwner",
+                    ClientName = "AtaResOwner",
+                    ClientId = "AtaResOwner",
                     Secret = "secret",
                     TokensLifetime = TimeSpan.FromDays(7),
                     Enabled = true
