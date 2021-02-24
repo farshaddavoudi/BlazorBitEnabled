@@ -76,9 +76,6 @@ namespace Bit.Http.Contracts
 
     public interface ITokenProvider
     {
-#if BlazorServer
-        Token? GetToken();
-#endif
         Task<Token?> GetTokenAsync();
 
         Task SetTokenAsync(Token? token);
@@ -148,33 +145,6 @@ namespace Bit.Http.Implementations
         }
     }
 
-#if BlazorServer
-    public class DefaultTokenProvider : ITokenProvider
-    {
-        private static Token? _token = new Token
-        {
-            access_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkMwOTYyNEZGNUQ5OTkyNkJFQkM4RTgwNkMxMUFGQjVDQ0I0NEI0NTkiLCJ4NXQiOiJ3SllrXzEyWmttdnJ5T2dHd1JyN1hNdEV0RmsiLCJ0eXAiOiJKV1QifQ.eyJuYmYiOjE2MTMwMjYyNzQsImV4cCI6MTYxMzYzMTA3NCwiaXNzIjoiQmxhem9yRHVhbE1vZGUuQXBpIiwiYXVkIjoiQmxhem9yRHVhbE1vZGUuQXBpL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IkJsYXpvckR1YWxNb2RlUmVzT3duZXIiLCJzY29wZSI6WyJvcGVuaWQiLCJwcm9maWxlIiwidXNlcl9pbmZvIl0sInN1YiI6InRlc3QiLCJhdXRoX3RpbWUiOjE2MTMwMjYyNzQsImlkcCI6Imlkc3J2IiwicHJpbWFyeV9zaWQiOiJ7XHJcbiAgXCJVc2VySWRcIjogXCJ0ZXN0XCIsXHJcbiAgXCJDdXN0b21Qcm9wc1wiOiB7fVxyXG59IiwianRpIjoiMzEyM2UxNmVmOGU1NGI5YTBhZGVhZjI2YjgzY2MyNmI1MjA2MTg4NjMzN2E1YmYzNzQyMjJmZDJmYjAxYjVmNyIsImFtciI6WyJjdXN0b20iXX0.vy2mo9FSRTtSVYL5hbRs47a0BQbGYSt34p_ECl-AeMnPZW1Q_R3MMP5vxj8QQqnzepZH76vVw4PyPqcreHNMjGmHPFDM3QhdCvHIaT_P21cTo1agQv8ua7WrsUy2KJiXup4pUF28ItQjqLbrNgOOiY0CgtNnaZJK_lcJyQykd4S_WKW93dBJMtzI3Sv35xttsKmolnNOJeTQ4K6GRvf3wLnTImfSvao5UgoMN7Dkn1Md-rYDtBhRHahdK_sjRcHgxBkLqqI4Kp0snljG4cRQM2Fn94Q4UxqD7-XHAEo7MRL5Jcb8Yc7sWTyox8RJxqPBQBfaSWameUe8syi_6Nqscw",
-            token_type = "Bearer"
-        };
-
-        public Token? GetToken()
-        {
-            return _token;
-        }
-
-        public async Task<Token?> GetTokenAsync()
-        {
-            return _token;
-        }
-
-        public async Task SetTokenAsync(Token? token)
-        {
-            _token = token;
-        }
-    }
-#endif
-
-#if BlazorClient
     public class DefaultTokenProvider : ITokenProvider
     {
         private readonly IJSRuntime _jsRuntime;
@@ -208,7 +178,6 @@ namespace Bit.Http.Implementations
             }
         }
     }
-#endif
 
     public class ODataHttpClient<TDto>
         where TDto : IDto

@@ -13,17 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		BitConfig.json = BitConfig.json
-		Clean.bat = Clean.bat
 		Directory.build.props = Directory.build.props
-		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Documents", "SolutionItems\Documents\Documents.shproj", "{16E0D272-D3F5-4E59-B4E8-D36E0A109997}"
-EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		SolutionItems\Documents\Documents.projitems*{16e0d272-d3f5-4e59-b4e8-d36e0a109997}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -44,9 +37,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{16E0D272-D3F5-4E59-B4E8-D36E0A109997} = {D6C5EC42-7DCA-4F3D-B849-0B6208DC7384}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4C9EAE5E-7C13-42B7-BC15-97CB2B0E2B61}

@@ -16,7 +16,7 @@ namespace ATA.Check.Web.Pages
 
         public async Task Login()
         {
-            Token token = await SecurityService.LoginWithCredentials(Username, Password, "ATACheckResOwner", "secret");
+            Token token = await SecurityService.LoginWithCredentials(Username, Password, "AtaResOwner", "secret");
             AtaAuthenticationStateProvider.StateHasChanged();
         }
 

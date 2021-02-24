@@ -21,20 +21,9 @@
 <body>
 
     <app>
-        @if (ATA.Check.Shared.BlazorDualModeDetector.Current.IsRunningServerSideBlazor())
-        {
-            <component type="typeof(App)" render-mode="@RenderMode.Server" />
-        }
     </app>
 
-    @if (ATA.Check.Shared.BlazorDualModeDetector.Current.IsRunningServerSideBlazor())
-    {
-        <script src="_framework/blazor.server.js" asp-append-version="true"></script>
-    }
-    @if (ATA.Check.Shared.BlazorDualModeDetector.Current.IsRunningClientSideBlazor())
-    {
-        <script src="_framework/blazor.webassembly.js" asp-append-version="true"></script>
-    }
+    <script src="_framework/blazor.webassembly.js" asp-append-version="true"></script>
     <script src="_content/Microsoft.AspNetCore.Components.Web.Extensions/headManager.js" asp-append-version="true"></script>
     <script src="scripts/ata.js" asp-append-version="true"></script>
 </body>

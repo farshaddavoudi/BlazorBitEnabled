@@ -15,7 +15,6 @@ namespace ATA.Check.Web
                 .RunAsync();
         }
 
-#if BlazorClient
         public static WebAssemblyHostBuilder CreateHostBuilder(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault();
@@ -28,13 +27,5 @@ namespace ATA.Check.Web
 
             return builder;
         }
-#elif BlazorServer
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-#endif
     }
 }

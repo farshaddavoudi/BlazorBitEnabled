@@ -125,7 +125,7 @@ namespace ATA.Check.Api
                 odataDependencyManager.RegisterWebApiODataMiddlewareUsingDefaultConfiguration();
             });
 
-            dependencyManager.RegisterSingleSignOnServer<ATACheckUserService, OAuthClientsProvider>();
+            dependencyManager.RegisterSingleSignOnServer<ATACheckUserService, ATACheckOAuthClientsProvider>();
 
             dependencyManager.RegisterAspNetCoreMiddlewareUsing(aspNetCoreApp =>
             {
