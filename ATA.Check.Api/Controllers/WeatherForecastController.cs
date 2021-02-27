@@ -1,4 +1,5 @@
-﻿using ATA.Check.Shared;
+﻿using ATA.Check.Api.Controllers.Filters;
+using ATA.Check.Shared;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace ATA.Check.Api.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        [HttpGet]
+        [HttpGet, AtaAuthorize(Roles = new[] { "Seller", "Staff" })]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
